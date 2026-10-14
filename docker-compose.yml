@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  shop-db:
+    image: postgres:16-alpine
+    container_name: shop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shopdb
+      POSTGRES_USER: shopuser
+      POSTGRES_PASSWORD: shoppass
+    ports:
+      - "5433:5432"          # 5433 снаружи, чтобы не конфликтовать с локальным постгресом
+    volumes:
+      - shop-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shopuser -d shopdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  shop-db-data:
